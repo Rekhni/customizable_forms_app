@@ -5,7 +5,7 @@ import axios from "axios";
 export default function FormDetails({ isDark, lang }) {
     const { formId } = useParams();
     const [form, setForm] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const token = localStorage.getItem('token');
     const API = import.meta.env.VITE_API_URL;
 
@@ -28,12 +28,14 @@ export default function FormDetails({ isDark, lang }) {
 
     }, [formId]);
 
-    if (loading) return <p className="text-white p-4">Loading...</p>
-    if (!form) return <p className="text-danger p-4">Form not found.</p>
-    
     return (
         <div className={`container ${isDark ? 'text-white' : 'text-dark'} pt-2`} style={{ maxWidth: '80%' }}>
-            <div className={`m-4 d-flex flex-column justify-content-center align-items-center border-info rounded shadow text-center ${isDark ? 'dark-mode' : 'light-mode'}`}>
+            {loading && (
+                <div class="spinner-border text-dark d-flex mx-auto mt-3" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            )}
+            {!loading && (<div className={`m-4 d-flex flex-column justify-content-center align-items-center border-info rounded shadow text-center ${isDark ? 'dark-mode' : 'light-mode'}`}>
                 <img src={form.template?.imageUrl} alt="form image" className="rounded" style={{ objectFit: 'cover', width: '100%', height: '200px' }}/>
                 <h2 style={{ fontSize: '50px' }}>{form.template?.title}</h2>
                 <p className="pb-0">{new Date(form.createdAt).toLocaleDateString()} {lang === 'en' ? 'by' : 'от'} {form.user?.name || form.user?.email}</p>
@@ -57,7 +59,7 @@ export default function FormDetails({ isDark, lang }) {
                     </div>
                     )
                 ))}
-            </div>
+            </div>)}
         </div>
     )
 }
