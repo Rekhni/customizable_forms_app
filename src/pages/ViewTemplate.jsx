@@ -7,6 +7,8 @@ export default function ViewTemplate({ isDark, lang }) {
     const { id: templateId } = useParams();
     const [template, setTemplate] = useState(null);
     const [questions, setQuestions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [submitLoading, setSubmitLoading] = useState(false);
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
     const [comments, setComments] = useState([]);
@@ -46,6 +48,8 @@ export default function ViewTemplate({ isDark, lang }) {
                 setTemplate(res.data);
             } catch(err) {
                 console.error(err);
+            } finally {
+                setLoading(false);
             }
         }
 
@@ -76,15 +80,16 @@ export default function ViewTemplate({ isDark, lang }) {
                     value: Array.isArray(value) ? value.join(', ') : value
                 }))
             }
-
+            setSubmitLoading(true);
             await axios.post(`${API}/forms`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
-            alert('Form submitted successfully');
         } catch(err) {
             console.error(err);
             alert('Failed to submit form');
+        } finally {
+            setSubmitLoading(false);
+            alert('Form submitted successfully!');
         }
     }
 
@@ -130,13 +135,15 @@ export default function ViewTemplate({ isDark, lang }) {
         }));
     };
 
-    if (!template) return <p>Loading template...</p>
-
-
 
     return (
         <div className={`${isDark ? 'text-white' : 'text-dark'}`} style={{ padding: '2rem' }}>
-            <div className={`mx-auto rounded shadow ${isDark ? 'dark-mode' : 'light-mode'} border-info`} style={{ height: '100%', maxWidth: '70%', marginTop: '20px', padding: '30px' }}>
+            {loading && (
+                <div class="spinner-border text-dark d-flex mx-auto mt-3" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            )}
+            {!loading && (<div className={`mx-auto rounded shadow ${isDark ? 'dark-mode' : 'light-mode'} border-info`} style={{ height: '100%', maxWidth: '70%', marginTop: '20px', padding: '30px' }}>
                 <img src={template.imageUrl} alt="template img" className="rounded" style={{ objectFit: 'cover', width: '100%', height: '200px' }}/>
                 {(template && (user?.id === template.userId || isAdmin)) && (
                     <Link to={`/template/${template.id}/edit`}>
@@ -244,12 +251,17 @@ export default function ViewTemplate({ isDark, lang }) {
                             </button>
                         </div>
                     )}
-                    {isLoggedIn && (
+                    {(isLoggedIn && submitLoading) && (
+                        <div class="spinner-border text-dark mt-3" role="status">
+                            <span class="sr-only"></span>
+                        </div>
+                    )}
+                    {(isLoggedIn && !submitLoading) && (
                         <div className="mt-4">
                             <button  className={`rounded btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'}`} onClick={handleSubmitForm}>{lang === 'en' ? 'Submit Form' : 'Сдать форму'}</button>
                         </div>
                     )}
-            </div>
+            </div>)}
 
 
         </div>

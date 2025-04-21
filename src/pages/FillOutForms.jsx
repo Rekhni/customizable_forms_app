@@ -44,7 +44,7 @@ export default function FillOutForms({ isDark, lang }) {
         }
     }
 
-    if (loading) return <p className={`${isDark ? 'text-white' : 'text-dark'} p-4`}>Loading...</p>
+    if (loading) return <div class="spinner-border text-dark d-flex m-auto" role="status"><span class="sr-only"></span></div>
 
     return (
         <div className={`container pt-4 ${isDark ? 'text-white' : 'text-dark'} pb-4`} style={{ maxWidth: '50%' }}>

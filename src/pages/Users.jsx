@@ -4,6 +4,10 @@ import axios from 'axios';
 export default function Users({ isDark, lang }) {
     const [users, setUsers] = useState([]);
     const [selectedUserIds, setSelectedUserIds] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [loadingDelete, setLoadingDelete] = useState(false);
+    const [loadingToggleAdmin, setLoadingToggleAdmin] = useState(false);
+    const [loadingToggleBlock, setLoadingToggleBlock] = useState(false);
     const token = localStorage.getItem('token');
     const API = import.meta.env.VITE_API_URL;
 
@@ -19,6 +23,8 @@ export default function Users({ isDark, lang }) {
             setUsers(res.data);
         } catch(err) {
             console.error("Failed to fetch users:",err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -32,40 +38,53 @@ export default function Users({ isDark, lang }) {
         if (!window.confirm("Are you sure you want to delete selected users?")) return;
 
         try {
+            setLoadingDelete(true);
             await axios.delete(`${API}/users`, {
                 headers: { Authorization: `Bearer ${token}` },
                 data: { userIds: selectedUserIds }
             });
 
+            setLoadingDelete(false);
             fetchUsers();
             setSelectedUserIds([]);
         } catch(err) { 
             console.error("Failed to delete users:", err);
+        } finally {
+            setLoadingDelete(false);
         }
     };
 
     const toggleAdmin = async () => {
         try {
+            setLoadingToggleAdmin(true);
             await axios.put(`${API}/users/toggle-admin`, { userIds: selectedUserIds }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+
+            setLoadingToggleAdmin(false);
             fetchUsers();
             setSelectedUserIds([]);
         } catch(err) {
             console.error("Failed to update admin status:", err);
+        } finally {
+            setLoadingToggleAdmin(false);
         }
     }
 
     const toggleBlock = async () => {
         try {
+            setLoadingToggleBlock(true);
             await axios.put(`${API}/users/toggle-block`, { userIds: selectedUserIds }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
+            setLoadingToggleBlock(false);
             fetchUsers();
             setSelectedUserIds([]);
         } catch(err) {
             console.error("Failed to update block/unblock user", err);
+        } finally {
+            setLoadingToggleBlock(false);
         }
     }
 
@@ -74,16 +93,40 @@ export default function Users({ isDark, lang }) {
             <h2>{lang === 'en' ? 'All users' : 'Все пользователи'}</h2>
             <div className={`d-flex flex-wrap gap-2 shadow justify-content-start p-3 rounded ${isDark ? 'dark-mode' : 'light-mode'} border-info`}>
                 <button className="btn btn-danger" onClick={deleteUsers} disabled={selectedUserIds.length === 0}>
-                    <i className="bi bi-trash"></i> 
+                    {loadingDelete ? (
+                        <div class="spinner-border text-dark" role="status" style={{ width: '15px', height: '15px' }}>
+                            <span class="sr-only"></span>
+                        </div>
+                    ) : (
+                        <i className="bi bi-trash"></i>
+                    )} 
                 </button>
                 <button className="btn btn-info" onClick={toggleAdmin} disabled={selectedUserIds.length === 0}>
-                    <i className="bi bi-person-fill-gear"></i>
+                    {loadingToggleAdmin ? (
+                        <div class="spinner-border text-dark" role="status" style={{ width: '15px', height: '15px' }}>
+                            <span class="sr-only"></span>
+                        </div>
+                    ) : (
+                        <i className="bi bi-person-fill-gear"></i>
+                    )}
                 </button>
                 <button className="btn btn-primary" onClick={toggleBlock} disabled={selectedUserIds.length === 0}>
-                    <i className="bi bi-shield-lock"></i> {lang === 'en' ? 'Toggle Block' : 'Заблокировать / Разблокировать'}
+                    {loadingToggleBlock ? (
+                        <div class="spinner-border text-white " role="status" style={{ width: '15px', height: '15px', marginRight: '5px' }}>
+                            <span class="sr-only"></span>
+                        </div>
+                    ) : (
+                        <i className="bi bi-shield-lock" style={{ marginRight: '5px' }}></i>
+                    )}
+                    {lang === 'en' ? 'Toggle Block' : 'Заблокировать / Разблокировать'}
                 </button>
             </div>
-            <div className="table-responsive">
+            {loading && (
+                <div class="spinner-border text-dark d-flex mx-auto mt-2" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            )}
+            {!loading && (<div className="table-responsive">
                 <div className="mt-4 shadow rounded border overflow-auto" style={{ maxHeight: '450px' }}>
                     <table className="table table-striped table-hover mb-0">
                         <thead className={isDark ? 'table-dark' : 'table-light'}>
@@ -108,6 +151,11 @@ export default function Users({ isDark, lang }) {
                             <th>{lang === 'en' ? 'Blocked' : 'Заблокирован'}</th>
                             </tr>
                         </thead>
+                        {loading && (
+                            <div class="spinner-border text-dark d-flex justify-content-center mx-auto mt-2 mb-2" role="status">
+                                <span class="sr-only"></span>
+                            </div>
+                        )}
                         <tbody>
                             {users.map((user, i) => (
                             <tr key={user.id}>
@@ -130,7 +178,7 @@ export default function Users({ isDark, lang }) {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div>)}
         </div>
     )
 }

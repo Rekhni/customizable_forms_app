@@ -5,6 +5,7 @@ import { checkIfBlocked } from "../utils/checkBlocked.js";
 import CloudinaryUpload from "../components/CloudinaryUpload.jsx";
 
 export default function CreateTemplateWithQuestions({ isDark, lang }) {
+    const [submitLoading, setSubmitLoading] = useState(false);
     
     const [template, setTemplate] = useState({
         title: '',
@@ -76,7 +77,7 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                 ...template,
                 tags: template.tags.split(',').map(t => t.trim())
             };
-
+            setSubmitLoading(true);
             const res = await axios.post(`${API}/templates`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -96,11 +97,12 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             }
-
-            // navigate(`/template/${templateId}/edit`)
+            setSubmitLoading(false);
             navigate('/');
         } catch(err) {
             console.error(err);
+        } finally {
+            setSubmitLoading(false);
         }
     };
 
@@ -209,10 +211,14 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                     </li>
                 ))}
             </ul>
-
-            <button  className={`rounded btn d-flex mx-auto ${isDark ? 'btn-success border-white text-white' : 'btn-success border-dark'}`} onClick={handleSubmit} style={{ marginTop: '2rem' }}>
+            {submitLoading && (
+                <div class="spinner-border text-dark d-flex mx-auto" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            )}
+            {!submitLoading && (<button  className={`rounded btn d-flex mx-auto ${isDark ? 'btn-success border-white text-white' : 'btn-success border-dark'}`} onClick={handleSubmit} style={{ marginTop: '2rem' }}>
             {lang === 'en' ? 'Save template' : 'Сохранить шаблон'}
-            </button>
+            </button>)}
         </div>
     );
 }

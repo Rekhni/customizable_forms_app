@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function Register({ isDark, lang }) {
     const [form, setForm] = useState({ name: '', email: '', password: '' });
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const API = import.meta.env.VITE_API_URL;
 
@@ -16,6 +17,7 @@ export default function Register({ isDark, lang }) {
         e.preventDefault();
 
         try {
+            setLoading(true);
             await axios.post(`${API}/auth/register`, form);
             navigate('/login');
         } catch (err) {
@@ -25,6 +27,8 @@ export default function Register({ isDark, lang }) {
             } else {
                 setError('An error occurred during signing up.');
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -36,7 +40,15 @@ export default function Register({ isDark, lang }) {
                 <input className="w-25 rounded form-control form-control-lg" name="name" type="text" placeholder={`${lang==='en' ? 'Name' : 'Имя'}`}  value={form.name} onChange={handleChange} required/>
                 <input className="w-25 rounded form-control form-control-lg" name="email" type="email" placeholder={`${lang==='en' ? 'Email' : 'Почта'}`}  value={form.email} onChange={handleChange} required/>
                 <input className="w-25 rounded form-control form-control-lg" name="password" type="password" placeholder={`${lang==='en' ? 'Password' : 'Пароль'}`}  value={form.password} onChange={handleChange} required/>
-                <button className="rounded text-white border-info" type="submit" style={{ backgroundColor: '#1E90FF', fontSize: '20px', padding: '8px 20px' }}>{lang==='en' ? 'Sign up': 'Зарегистрироваться'}</button>
+                {loading ? (
+                    <div class="spinner-border text-dark" role="status">
+                        <span class="sr-only"></span>
+                    </div>
+                ) : (
+                    <button className="rounded text-white border-info" type="submit" style={{ backgroundColor: '#1E90FF', fontSize: '20px', padding: '8px 20px' }}>
+                        {lang==='en' ? 'Sign up': 'Зарегистрироваться'}
+                    </button>
+                )}
             </form>
         </div>
     )

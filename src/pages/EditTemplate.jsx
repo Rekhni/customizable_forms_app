@@ -8,6 +8,8 @@ export default function EditTemplate({ isDark, lang }) {
     const { id: templateId } = useParams();
     const [template, setTemplate] = useState({ questions: [] });
     const [loading, setLoading] = useState(true);
+    const [loadingSave, setLoadingSave] = useState(false);
+    const [loadingAddQuestion, setLoadingAddQuestion] = useState(false);
     const [newImage, setNewImage] = useState("");
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     const [showAddQuestion, setShowAddQuestion] = useState(false);
@@ -124,6 +126,7 @@ export default function EditTemplate({ isDark, lang }) {
                 imageUrl: newImage || template.imageUrl,
                 tags: typeof template.tags === "string" ? template.tags.split(",").map(t => t.trim()) : template.tags
             }
+            setLoadingSave(true);
             await axios.put(`${API}/templates/${templateId}`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -150,7 +153,9 @@ export default function EditTemplate({ isDark, lang }) {
                   headers: { Authorization: `Bearer ${token}` }
                 });
               }
-
+            
+            
+            setLoadingSave(false);
             setDeletedQuestionIds([]);
             navigate(`/template/${templateId}/preview`);
         } catch(err) {
@@ -158,65 +163,66 @@ export default function EditTemplate({ isDark, lang }) {
         }
     };
 
-    if (loading || !template) return <p className="text-white p-4">Loading...</p>;
-
     return (
         <div className={`container pt-4 ${isDark ? 'text-white' : 'text-dark'} p-4`}>
-            
-            <form onSubmit={handleSubmit} className={`mt-3 w-75 w-lg-50 mx-auto rounded shadow ${isDark ? 'dark-mode' : 'light-mode'} border-info`} style={{ padding: '20px' }}>
-            <h2>{lang === 'en' ? 'Edit Template' : 'Редактировать шаблон'}</h2>
-            <div className="mb-3">
-                <label className="form-label">{lang === 'en' ? 'Title' : 'Название'}</label>
-                <input
-                name="title"
-                className="form-control"
-                value={template.title}
-                onChange={handleChange}
-                required
-                />
-            </div>
-    
-            <div className="mb-3">
-                <label className="form-label">{lang === 'en' ? 'Description' : 'Описание'}</label>
-                <textarea
-                name="description"
-                className="form-control"
-                value={template.description}
-                onChange={handleChange}
-                />
-            </div>
-    
-            <div className="mb-3">
-                <label className="form-label">{lang === 'en' ? 'Topic' : 'Тема'}</label>
-                <input
-                name="topic"
-                className="form-control"
-                value={template.topic}
-                onChange={handleChange}
-                />
-            </div>
-    
-            <div className="mb-3">
-                <label className="form-label">{lang === 'en' ? 'Tags (comma-separated)' : 'Теги (разделенные-запятыми)'}</label>
-                <input
-                name="tags"
-                className="form-control"
-                value={Array.isArray(template.tags) ? template.tags.join(", ") : template.tags}
-                onChange={handleChange}
-                />
-            </div>
-    
-            <div className="mb-3">
-                <label className="form-label">{lang === 'en' ? 'Image' : 'Картина'}</label>
-                <CloudinaryUpload onUpload={(url) => setNewImage(url)} isDark={isDark}/>
-                {template.imageUrl && !newImage && (
-                    <img src={template.imageUrl} alt={template.title} className="mt-2 rounded" style={{ width: "100%", maxHeight: "200px", objectFit: "cover" }}/>
-                )}
-                {newImage && (
-                    <img src={newImage} alt="New image" className="mt-2 rounded" style={{ width: "100%", maxHeight: "200px", objectFit: "cover" }}/>
-                )}
-            </div>
-            <hr />
+            {loading && (
+                <div class="spinner-border text-dark d-flex mx-auto mt-3" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            )}
+            {!loading && (<form onSubmit={handleSubmit} className={`mt-3 w-75 w-lg-50 mx-auto rounded shadow ${isDark ? 'dark-mode' : 'light-mode'} border-info`} style={{ padding: '20px' }}>
+                <h2>{lang === 'en' ? 'Edit Template' : 'Редактировать шаблон'}</h2>
+                <div className="mb-3">
+                    <label className="form-label">{lang === 'en' ? 'Title' : 'Название'}</label>
+                    <input
+                    name="title"
+                    className="form-control"
+                    value={template.title}
+                    onChange={handleChange}
+                    required
+                    />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">{lang === 'en' ? 'Description' : 'Описание'}</label>
+                    <textarea
+                    name="description"
+                    className="form-control"
+                    value={template.description}
+                    onChange={handleChange}
+                    />
+                </div>
+        
+                <div className="mb-3">
+                    <label className="form-label">{lang === 'en' ? 'Topic' : 'Тема'}</label>
+                    <input
+                    name="topic"
+                    className="form-control"
+                    value={template.topic}
+                    onChange={handleChange}
+                    />
+                </div>
+        
+                <div className="mb-3">
+                    <label className="form-label">{lang === 'en' ? 'Tags (comma-separated)' : 'Теги (разделенные-запятыми)'}</label>
+                    <input
+                    name="tags"
+                    className="form-control"
+                    value={Array.isArray(template.tags) ? template.tags.join(", ") : template.tags}
+                    onChange={handleChange}
+                    />
+                </div>
+        
+                <div className="mb-3">
+                    <label className="form-label">{lang === 'en' ? 'Image' : 'Картина'}</label>
+                    <CloudinaryUpload onUpload={(url) => setNewImage(url)} isDark={isDark}/>
+                    {template.imageUrl && !newImage && (
+                        <img src={template.imageUrl} alt={template.title} className="mt-2 rounded" style={{ width: "100%", maxHeight: "200px", objectFit: "cover" }}/>
+                    )}
+                    {newImage && (
+                        <img src={newImage} alt="New image" className="mt-2 rounded" style={{ width: "100%", maxHeight: "200px", objectFit: "cover" }}/>
+                    )}
+                </div>
+                <hr />
                 <h4 className="mt-5">{lang === 'en' ? 'Questions' : 'Вопросы'}</h4>
                 <div className="d-flex align-items-center gap-3 mb-3">
                     <button
@@ -380,12 +386,17 @@ export default function EditTemplate({ isDark, lang }) {
                         </button>
                     </div>
                     )}
-
-                    <button
+                    {loadingAddQuestion && (
+                        <div class="spinner-border text-dark mt-3" role="status">
+                            <span class="sr-only"></span>
+                        </div>
+                    )}
+                    {!loadingAddQuestion && (<button
                     type="button"
                     className={`btn ${isDark ? 'border-white text-white btn-outline-dark' : 'border-dark text-dark btn-outline-light'}`}
                     onClick={async () => {
                         try {
+                            setLoadingAddQuestion(true);
                         const res = await axios.post(`${API}/questions/${templateId}`, {
                             ...newQuestion,
                             options: newQuestion.type === 'checkbox' ? newQuestion.options : null
@@ -405,19 +416,29 @@ export default function EditTemplate({ isDark, lang }) {
                             showInTable: false,
                             options: ['', ''],
                         });
-
+                        
+                        setLoadingAddQuestion(false);
                         setShowAddQuestion(false);
                         } catch (err) {
                         console.error("Failed to add question:", err);
+                        } finally {
+                            setLoadingAddQuestion(false);
                         }
                     }}
                     >
                     <i className="bi bi-plus"></i> {lang==='en' ? 'Add question' : 'Добавить вопрос'}
-                    </button>
+                    </button>)}
                 </div>
                 )}
-                <button type="submit" className={`btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'} mt-2`}>{lang==='en' ? 'Save' : 'Сохранить'}</button>
-            </form>
+                {loadingSave && (
+                    <div class="spinner-border text-dark mt-3" role="status">
+                        <span class="sr-only"></span>
+                    </div>
+                )}
+                {!loadingSave && (
+                    <button type="submit" className={`btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'} mt-2`}>{lang==='en' ? 'Save' : 'Сохранить'}</button>
+                )}
+            </form>)}
       </div>
     )
 }

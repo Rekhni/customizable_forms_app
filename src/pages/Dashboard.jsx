@@ -8,6 +8,7 @@ import { TemplateGrid } from "../components/TemplateGrid.jsx";
 export default function Dashboard({ isDark, lang }) {
   const [myTemplates, setMyTemplates] = useState([]);
   const [otherTemplates, setOtherTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user'));
   const isLoggedIn = !!token;
@@ -32,6 +33,8 @@ export default function Dashboard({ isDark, lang }) {
         }
       } catch (err) {
         console.error('Failed to fetch templates:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -53,6 +56,11 @@ export default function Dashboard({ isDark, lang }) {
           <h2>
             {lang === 'en' ? 'Latest Templates' : 'Последние шаблоны' }
           </h2>
+          {loading && (
+            <div class="spinner-border text-dark" role="status">
+              <span class="sr-only"></span>
+            </div>
+          )}
           {latestTemplates.length > 0 ? (
             <TemplateGrid templates={latestTemplates} isDark={isDark}/>
           ) : (
@@ -87,6 +95,11 @@ export default function Dashboard({ isDark, lang }) {
           ? (lang === 'en' ? 'Other Templates' : 'Другие шаблоны')
           : (lang === 'en' ? 'Templates' : 'Шаблоны')}
       </h2>
+      {loading && (
+        <div class="spinner-border text-dark" role="status">
+          <span class="sr-only"></span>
+        </div>
+          )}
       <TemplateGrid templates={otherTemplates} isDark={isDark}/>
     </div>
   );

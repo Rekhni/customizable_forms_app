@@ -6,6 +6,7 @@ export default function Login({ isDark, lang }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const API = import.meta.env.VITE_API_URL;
 
@@ -14,8 +15,8 @@ export default function Login({ isDark, lang }) {
         setError('');
 
         try {
+            setLoading(true);
             const res = await axios.post(`${API}/auth/login`, { email, password });
-
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('user', JSON.stringify(res.data.user)); 
             navigate('/');
@@ -27,6 +28,8 @@ export default function Login({ isDark, lang }) {
             } else {
                 setError('An error occurred during login.');
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -36,7 +39,15 @@ export default function Login({ isDark, lang }) {
             <h2 className={`${isDark ? 'text-white' : 'text-dark'}`}>{lang==='en' ? 'Sign in' : 'Войти'}</h2>
             <input className="w-25 rounded form-control form-control-lg" name="email" type="email" placeholder={`${lang==='en' ? 'Email' : 'Почта'}`} onChange={(e) => setEmail(e.target.value)} required style={{ height: '30px' }}/>
             <input className="w-25 rounded form-control form-control-lg" name="password" type="password" placeholder={`${lang==='en' ? 'Password' : 'Пароль'}`} onChange={(e) => setPassword(e.target.value)} required/>
-            <button className="rounded text-white border-info" type="submit" style={{ backgroundColor: '#1E90FF', fontSize: '20px', padding: '8px 20px'}}>{lang==='en' ? 'Sign in' : 'Войти'}</button>
+            {loading ? (
+                <div class="spinner-border text-dark" role="status">
+                    <span class="sr-only"></span>
+                </div>
+            ) : (
+                <button className="rounded text-white border-info" type="submit" style={{ backgroundColor: '#1E90FF', fontSize: '20px', padding: '8px 20px'}}>
+                    {lang==='en' ? 'Sign in' : 'Войти'}
+                </button>
+            )}
             <p className={`${isDark ? 'text-white' : 'text-dark'}`}>{lang==='en' ? 'Not signed up yet' : 'Нет аккаунта'}? <Link to="/register" className={`${isDark ? 'text-white' : 'text-dark'}`}>{lang==='en' ? 'Signed up now' : 'Зарегистрируйся сейчас'}!</Link></p>
         </form>
     );
