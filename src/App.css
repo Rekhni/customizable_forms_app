@@ -1,0 +1,30 @@
+
+
+* {
+    font-family: 'Russo One', sans-serif;
+    font-weight: 300;
+}
+
+  
+
+.custom-hover:hover {
+    background-color: rgb(14 85 153) !important;
+}
+
+
+.light-mode {
+    background-color: #98FB98;
+}
+
+.dark-mode {
+    background-color: rgb(25, 78, 78);
+}
+
+
+.bg-theme-dark {
+    background-color: rgb(58, 116, 116);
+}
+
+.bg-theme-light {
+    background-color: rgb(206, 236, 215);
+}
