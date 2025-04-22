@@ -34,12 +34,12 @@ export default function Register({ isDark, lang }) {
 
     return (
         <div>
-            <form onSubmit={handleSubmit} className="d-flex flex-column justify-content-center align-items-center w-75 mx-auto gap-3" style={{ paddingTop: '200px' }}>
+            <form onSubmit={handleSubmit} className="d-flex flex-column justify-content-center align-items-center mx-auto gap-3" style={{ paddingTop: '200px' }}>
                 {error && <p className="p-4 bg-danger text-white rounded">{error}</p>}
                 <h2  className={`${isDark ? 'text-white' : 'text-dark'}`}>{lang==='en' ? 'Sign up': 'Регистрация'}</h2>
-                <input className="w-25 rounded form-control form-control-lg" name="name" type="text" placeholder={`${lang==='en' ? 'Name' : 'Имя'}`}  value={form.name} onChange={handleChange} required/>
-                <input className="w-25 rounded form-control form-control-lg" name="email" type="email" placeholder={`${lang==='en' ? 'Email' : 'Почта'}`}  value={form.email} onChange={handleChange} required/>
-                <input className="w-25 rounded form-control form-control-lg" name="password" type="password" placeholder={`${lang==='en' ? 'Password' : 'Пароль'}`}  value={form.password} onChange={handleChange} required/>
+                <input className="w-25 rounded form-control form-control-lg" name="name" type="text" placeholder={`${lang==='en' ? 'Name' : 'Имя'}`}  value={form.name} onChange={handleChange} required style={{ minWidth: '300px' }}/>
+                <input className="w-25 rounded form-control form-control-lg" name="email" type="email" placeholder={`${lang==='en' ? 'Email' : 'Почта'}`}  value={form.email} onChange={handleChange} required style={{ minWidth: '300px' }}/>
+                <input className="w-25 rounded form-control form-control-lg" name="password" type="password" placeholder={`${lang==='en' ? 'Password' : 'Пароль'}`}  value={form.password} onChange={handleChange} required style={{ minWidth: '300px' }}/>
                 {loading ? (
                     <div class="spinner-border text-dark" role="status">
                         <span class="sr-only"></span>

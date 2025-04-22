@@ -47,7 +47,7 @@ export default function FillOutForms({ isDark, lang }) {
     if (loading) return <div class="spinner-border text-dark d-flex m-auto" role="status"><span class="sr-only"></span></div>
 
     return (
-        <div className={`container pt-4 ${isDark ? 'text-white' : 'text-dark'} pb-4`} style={{ maxWidth: '50%' }}>
+        <div className={`container pt-4 ${isDark ? 'text-white' : 'text-dark'} pb-4`} style={{ maxWidth: '700px', minWidth: '300px' }}>
             <h2>{lang === 'en' ? 'Submitted Forms' : 'Заполненные формы'}</h2>
             {selectedForms.length > 0 && (
               <button className="btn btn-danger mb-2" onClick={handleDeleteSelected} disabled={selectedForms.length === 0}>
@@ -84,7 +84,7 @@ export default function FillOutForms({ isDark, lang }) {
                                 className={`flex-grow-1 text-decoration-none ${isDark ? 'text-white' : 'text-dark'}`}
                                 >
                                 <div className="d-flex justify-content-between ms-3">
-                                    <p>{i + 1} - {form.template?.title}</p>
+                                    <p className="m-0">{i + 1} - {form.template?.title}</p>
                                     <div className={`d-flex gap-3 text-end ${isDark ? 'text-white' : 'text-dark'}`}>
                                     <div>{form.user?.name || form.user?.email}</div>
                                     <div>{new Date(form.createdAt).toLocaleDateString()}</div>

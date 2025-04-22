@@ -37,8 +37,8 @@ export default function Login({ isDark, lang }) {
         <form onSubmit={handleSubmit} className="d-flex flex-column justify-content-center align-items-center gap-3" style={{ width: '100%', height: '100vh'}}>
             {error && <p className="p-4 bg-danger text-white rounded">{error}</p>}
             <h2 className={`${isDark ? 'text-white' : 'text-dark'}`}>{lang==='en' ? 'Sign in' : 'Войти'}</h2>
-            <input className="w-25 rounded form-control form-control-lg" name="email" type="email" placeholder={`${lang==='en' ? 'Email' : 'Почта'}`} onChange={(e) => setEmail(e.target.value)} required style={{ height: '30px' }}/>
-            <input className="w-25 rounded form-control form-control-lg" name="password" type="password" placeholder={`${lang==='en' ? 'Password' : 'Пароль'}`} onChange={(e) => setPassword(e.target.value)} required/>
+            <input className="w-25 rounded form-control form-control-lg" name="email" type="email" placeholder={`${lang==='en' ? 'Email' : 'Почта'}`} onChange={(e) => setEmail(e.target.value)} required style={{ minWidth: '300px' }}/>
+            <input className="w-25 rounded form-control form-control-lg" name="password" type="password" placeholder={`${lang==='en' ? 'Password' : 'Пароль'}`} onChange={(e) => setPassword(e.target.value)} required style={{  minWidth: '300px' }}/>
             {loading ? (
                 <div class="spinner-border text-dark" role="status">
                     <span class="sr-only"></span>

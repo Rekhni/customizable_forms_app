@@ -108,7 +108,7 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
 
     return (
         <div style={{ padding: '2rem' }}>
-            <div className={`d-flex flex-column gap-3 mx-auto rounded shadow w-lg-50 ${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} border-info`} style={{ marginBottom: '2rem', padding: '20px', maxWidth: '60%'}}>
+            <div className={`d-flex flex-column gap-3 mx-auto rounded shadow ${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} border-info`} style={{ marginBottom: '2rem', padding: '20px', maxWidth: '700px'}}>
                 <h2>{lang === 'en' ? 'Create Template' : 'Создать шаблон'}</h2>
                 <input 
                     name="title" 
@@ -145,7 +145,7 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
             </div>
 
             <hr />
-            <div className={`d-flex flex-column gap-3 mx-auto rounded shadow w-lg-50 ${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} `} style={{ padding: '20px', maxWidth: '60%' }}>
+            <div className={`d-flex flex-column gap-3 mx-auto rounded shadow ${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} `} style={{ padding: '20px', maxWidth: '700px' }}>
                 <h3>{lang === 'en' ? 'New Question' : 'Новый Вопрос'}</h3>
                 <select name="type" value={currentQuestion.type} onChange={handleQuestionChange}>
                     <option value="single-line">{lang === 'en' ? 'Single-Line' : 'Однострочный'}</option>

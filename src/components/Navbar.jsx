@@ -31,13 +31,26 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
 
     return (
         <nav className={`navbar navbar-expand-md sticky-top border-bottom px-3 ${isDark ? 'dark-mode border-success' : 'light-mode border-info'}`}>
-        <Link className={`navbar-brand ${isDark ? 'text-white' : 'text-dark'}`} to="/" style={{ fontSize: '15px' }}>
+        <div className="d-flex gap-2">
+                <button 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#navbarContent"
+                    className={`navbar-toggler ${isDark ? 'border-white' : 'border-dark'}`}
+                >
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <button onClick={onToggleTheme} className={`btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'} btn-sm ms-auto`}>
+                {isDark ? <i class="bi bi-brightness-high"></i> : <i class="bi bi-moon"></i>}
+                </button>
+                <button onClick={onToggleLanguage} className={`btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'} btn-sm ms-auto`} style={{ marginLeft: '10px' }}>
+                    {lang === 'en' ? <span>ru</span> : <span>en</span>}
+                </button>
+        </div>
+
+        <Link className={`navbar-brand ms-3 ${isDark ? 'text-white' : 'text-dark'}`} to="/" style={{ fontSize: '15px' }}>
             {lang === 'en' ? 'Dashboard' : 'Шаблоны'}
         </Link>
-
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <span className={`navbar-toggler-icon ${isDark ? 'text-white' : 'text-dark'}`}></span>
-        </button>
 
         <div className="collapse navbar-collapse" id="navbarContent" style={{ marginRight: '10px' }}>
             <ul className="navbar-nav me-auto mb-2 mb-md-0">
@@ -48,6 +61,7 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
                     </Link>
                 </li>
             )}
+
             {(isAdmin || user?.id) && (
                 <>
                 <li className="nav-item">
@@ -60,7 +74,7 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
                         <input
                         type="text"
                         placeholder={`${lang === 'en' ? 'Search by tag...' : 'Искать по тэгу...'}`}
-                        className="form-control form-control-sm mt-2 mt-md-0"
+                        className="form-control form-control-sm mt-md-0 mt-md-0"
                         style={{ maxWidth: "200px" }}
                         value={search}
                         onChange={handleSearchChange}
@@ -87,14 +101,6 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
             </Link>
             )}
         </div>
-            <div className="d-flex gap-2">
-            <button onClick={onToggleTheme} className={`btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'} btn-sm ms-auto`}>
-            {isDark ? <i class="bi bi-brightness-high"></i> : <i class="bi bi-moon"></i>}
-            </button>
-            <button onClick={onToggleLanguage} className={`btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'} btn-sm ms-auto`} style={{ marginLeft: '10px' }}>
-                {lang === 'en' ? <span>ru</span> : <span>en</span>}
-            </button>
-            </div>
         </nav>
 
     );

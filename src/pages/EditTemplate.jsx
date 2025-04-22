@@ -170,7 +170,7 @@ export default function EditTemplate({ isDark, lang }) {
                     <span class="sr-only"></span>
                 </div>
             )}
-            {!loading && (<form onSubmit={handleSubmit} className={`mt-3 w-75 w-lg-50 mx-auto rounded shadow ${isDark ? 'dark-mode' : 'light-mode'} border-info`} style={{ padding: '20px' }}>
+            {!loading && (<form onSubmit={handleSubmit} className={`mt-3 w-lg-50 mx-auto rounded shadow ${isDark ? 'dark-mode' : 'light-mode'} border-info`} style={{ padding: '20px', maxWidth: '700px' }}>
                 <h2>{lang === 'en' ? 'Edit Template' : 'Редактировать шаблон'}</h2>
                 <div className="mb-3">
                     <label className="form-label">{lang === 'en' ? 'Title' : 'Название'}</label>

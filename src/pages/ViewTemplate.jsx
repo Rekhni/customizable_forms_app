@@ -137,13 +137,13 @@ export default function ViewTemplate({ isDark, lang }) {
 
 
     return (
-        <div className={`${isDark ? 'text-white' : 'text-dark'}`} style={{ padding: '2rem' }}>
+        <div className={`${isDark ? 'text-white' : 'text-dark'}`} style={{ padding: '30px 20px' }}>
             {loading && (
                 <div class="spinner-border text-dark d-flex mx-auto mt-3" role="status">
                     <span class="sr-only"></span>
                 </div>
             )}
-            {!loading && (<div className={`mx-auto rounded shadow ${isDark ? 'dark-mode' : 'light-mode'} border-info`} style={{ height: '100%', maxWidth: '70%', marginTop: '20px', padding: '30px' }}>
+            {!loading && (<div className={`mx-auto rounded shadow ${isDark ? 'dark-mode' : 'light-mode'} border-info`} style={{ height: '100%', maxWidth: '700px', marginTop: '20px', padding: '30px' }}>
                 <img src={template.imageUrl} alt="template img" className="rounded" style={{ objectFit: 'cover', width: '100%', height: '200px' }}/>
                 {(template && (user?.id === template.userId || isAdmin)) && (
                     <Link to={`/template/${template.id}/edit`}>
