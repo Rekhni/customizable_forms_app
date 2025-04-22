@@ -13,11 +13,12 @@ export default function Dashboard({ isDark, lang }) {
   const user = JSON.parse(localStorage.getItem('user'));
   const isLoggedIn = !!token;
   const navigate = useNavigate();
+  const API = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     checkIfBlocked(navigate);
     const fetchTemplates = async () => {
-      const API = import.meta.env.VITE_API_URL;
+      
       try {
         const res = await axios.get(`${API}/templates`, {
           headers: isLoggedIn ? { Authorization: `Bearer ${token}` } : {}
@@ -41,6 +42,7 @@ export default function Dashboard({ isDark, lang }) {
     fetchTemplates();
   }, [isLoggedIn]);
 
+
   const allTemplates = [...myTemplates, ...otherTemplates];
 
   const latestTemplates = allTemplates
@@ -61,11 +63,17 @@ export default function Dashboard({ isDark, lang }) {
               <span class="sr-only"></span>
             </div>
           )}
-          {latestTemplates.length > 0 ? (
-            <TemplateGrid templates={latestTemplates} isDark={isDark}/>
-          ) : (
-            <p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>
+          {(latestTemplates.length > 0 && !loading) && (
+            <TemplateGrid 
+              templates={latestTemplates} 
+              isDark={isDark}
+              lang={lang}
+              setMyTemplates={setMyTemplates}
+              setOtherTemplates={setOtherTemplates}
+            />
           )}
+            {(!latestTemplates && !loading) && (<p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>)}
+          
         </div>
       )}
       <hr className="my-4" />
@@ -81,7 +89,13 @@ export default function Dashboard({ isDark, lang }) {
           </Link>
 
           {myTemplates.length > 0 ? (
-            <TemplateGrid templates={myTemplates} isDark={isDark}/>
+            <TemplateGrid 
+              templates={myTemplates} 
+              isDark={isDark}
+              lang={lang}
+              setMyTemplates={setMyTemplates}
+              setOtherTemplates={setOtherTemplates}
+            />
           ) : (
             <p>{lang === 'en' ? 'No templates created yet' : 'Вы пока не создали свои шаблоны'}.</p>
           )}
@@ -100,7 +114,13 @@ export default function Dashboard({ isDark, lang }) {
           <span class="sr-only"></span>
         </div>
           )}
-      <TemplateGrid templates={otherTemplates} isDark={isDark}/>
+      <TemplateGrid 
+        templates={otherTemplates} 
+        isDark={isDark} 
+        lang={lang}
+        setMyTemplates={setMyTemplates}
+        setOtherTemplates={setOtherTemplates}
+      />
     </div>
   );
 };

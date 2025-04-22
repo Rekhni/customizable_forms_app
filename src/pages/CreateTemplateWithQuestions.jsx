@@ -188,11 +188,11 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
             </div>
 
             <hr />
-            <h3>{template.title}</h3>
-            <h4>{template.description}</h4>
+            <h3 className={`${isDark ? 'text-white' : 'text-dark'}`}>{template.title}</h3>
+            <h4 className={`${isDark ? 'text-white' : 'text-dark'}`}>{template.description}</h4>
             <ul>
                 {questions.map((q, i) => (
-                    <li key={i}>
+                    <li key={i} className={`${isDark ? 'text-white' : 'text-dark'}`}>
                         <strong>#{i + 1}:</strong> {q.title}  <br />
                         {q.type === 'single-line' && (
                             <input className="rounded" type="text" name="answer" placeholder={`${lang === 'en' ? 'Answer' : 'Ответ'}`}/>

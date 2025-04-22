@@ -29,7 +29,7 @@ export default function FormDetails({ isDark, lang }) {
     }, [formId]);
 
     return (
-        <div className={`container ${isDark ? 'text-white' : 'text-dark'} pt-2`} style={{ maxWidth: '80%' }}>
+        <div className={`container ${isDark ? 'text-white' : 'text-dark'} pt-2`} style={{ maxWidth: '1000px' }}>
             {loading && (
                 <div class="spinner-border text-dark d-flex mx-auto mt-3" role="status">
                     <span class="sr-only"></span>

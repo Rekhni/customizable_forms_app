@@ -84,6 +84,8 @@ export default function ViewTemplate({ isDark, lang }) {
             await axios.post(`${API}/forms`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+
+            setFormAnswers({});
         } catch(err) {
             console.error(err);
             alert('Failed to submit form');
@@ -166,7 +168,7 @@ export default function ViewTemplate({ isDark, lang }) {
                                 <input 
                                     type="text" 
                                     className="form-control"
-                                    value={formAnswers[q.id || '']}
+                                    value={formAnswers[q.id] || ''}
                                     onChange={(e) => handleAnswerChange(q.id, e.target.value)} 
                                 />
                             )}

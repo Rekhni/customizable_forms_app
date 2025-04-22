@@ -1,6 +1,28 @@
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-export function TemplateGrid({ templates, isDark }) {
+export function TemplateGrid({ templates, isDark, lang, setMyTemplates, setOtherTemplates }) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const isAdmin = user?.role === 'admin';
+    const token = localStorage.getItem('token');
+    const API = import.meta.env.VITE_API_URL;
+
+    const handleDeleteTemplate = async (templateId) => {
+      if (!confirm(`${lang === 'en' ? 'Are you sure you want to delete this template?' : 'Вы уверены что хотите удалить шаблон?'}`)) return;
+  
+      try {
+        await axios.delete(`${API}/templates/${templateId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+  
+        setMyTemplates((prev) => prev.filter(t => t.id !== templateId));
+        setOtherTemplates((prev) => prev.filter(t => t.id !== templateId));
+      } catch(err) {
+        console.error("Delete failed", err);
+        alert("Delete failed");
+      }
+    }
+    
     return (
       <div
         style={{
@@ -19,10 +41,7 @@ export function TemplateGrid({ templates, isDark }) {
               cursor: 'pointer',
             }}
           >
-            <Link
-              to={`/template/${t.id}/preview`}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
+
               <div
                 style={{
                   height: '150px',
@@ -32,15 +51,25 @@ export function TemplateGrid({ templates, isDark }) {
                 }}
               >
                 {t.imageUrl ? (
-                  <img
-                    src={t.imageUrl}
-                    alt={t.title}
+                  <Link 
+                    to={`/template/${t.id}/preview`}
                     style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                  >
+                    <img
+                      src={t.imageUrl}
+                      alt={t.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />                  
+                  </Link>
+
                 ) : (
                   <span style={{ fontSize: '1.2rem', color: '#aaa' }}>Form preview</span>
                 )}
@@ -49,8 +78,24 @@ export function TemplateGrid({ templates, isDark }) {
                 <h4 style={{ margin: 0 }}>{t.title || 'Untitled Form'}</h4>
                 <p style={{ fontSize: '0.85rem' }}>{t.topic || 'Other'}</p>
                 <p style={{ fontSize: '0.75rem' }}>{new Date(t.createdAt).toLocaleDateString()}</p>
+                <div className="d-flex justify-content-between">
+                  <Link
+                    
+                    to={`/template/${t.id}/preview`}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <button className="btn btn-primary bg-primary">{lang==='en' ? 'View' : 'Посмотреть'}</button>
+                    
+                  </Link>
+                  {(isAdmin || user?.id === t.userId ) && (
+                    <div >
+                      <button className="btn btn-danger" onClick={() => handleDeleteTemplate(t.id)}>
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </Link>
           </div>
         ))}
       </div>
