@@ -56,16 +56,16 @@ export default function Dashboard({ isDark, lang }) {
     <div className={`${isDark ? 'text-white' : 'text-dark'}`} style={{ padding: '2rem' }}>
       <div className="d-flex gap-2 mb-3">
         <button
-          className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'}`}
+          className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} rounded border-success`}
           onClick={() => setIsViewGallery(true)}
         >
-          <i className="bi bi-columns-gap"></i> Gallery
+          <i className="bi bi-columns-gap"></i> {lang==='en' ? 'Gallery' : 'Галерея'}
         </button>
         <button
-          className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'}`}
+          className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} rounded border-success`}
           onClick={() => setIsViewGallery(false)}
         >
-          <i className="bi bi-view-stacked"></i> List
+          <i className="bi bi-view-stacked"></i> {lang==='en' ? 'List' : 'Список'}
         </button>
       </div>
 

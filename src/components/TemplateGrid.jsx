@@ -42,7 +42,7 @@ export function TemplateGrid({ templates, isDark, lang, setMyTemplates, setOther
             gap: "1rem",
           }}
         >
-          <Link to={`/template/${t.id}/preview`} style={{ textDecoration: "none" }}>
+          {isViewGallery && (<Link to={`/template/${t.id}/preview`} style={{ textDecoration: "none" }}>
             <img
               src={t.imageUrl || "https://via.placeholder.com/150"}
               alt={t.title}
@@ -53,12 +53,16 @@ export function TemplateGrid({ templates, isDark, lang, setMyTemplates, setOther
                 borderRadius: "10px",
               }}
             />
-          </Link>
+          </Link>)}
 
           <div style={{ flex: 1 }}>
-            <h4>{t.title || "Untitled Form"}</h4>
-            <p>{t.topic || "Other"}</p>
-            <p>{new Date(t.createdAt).toLocaleDateString()}</p>
+            <div className={`${!isViewGallery ? 'd-flex justify-content-between' : ''}`}>
+              <h4 className={`${isViewGallery ? 'mt-2' : ''}`}>{t.title || "Untitled Form"}</h4>
+              <div className={`${!isViewGallery ? 'd-flex gap-3' : ''}`}>
+                <p>{t.topic || "Other"}</p>
+                <p>{new Date(t.createdAt).toLocaleDateString()}</p>
+              </div>
+            </div>
             <div className="d-flex justify-content-between">
               <Link to={`/template/${t.id}/preview`}>
                 <button className="btn btn-primary">{lang === "en" ? "View" : "Посмотреть"}</button>
