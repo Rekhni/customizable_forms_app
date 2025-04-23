@@ -125,14 +125,14 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                     onChange={handleTemplateChange} 
                 />
                 <select name="topic" value={template.topic} onChange={handleTemplateChange}>
-                    <option value="Other">Other</option>
-                    <option value="Information request">Information request</option>
-                    <option value="Feedback">Feedback</option>
-                    <option value="Appointment">Appointment</option>
-                    <option value="Quiz">Quiz</option>
-                    <option value="Product Order">Product Order</option>
-                    <option value="Education">Education</option>
-                    <option value="Hotel booking">Hotel booking</option>
+                    <option value="Other">{lang==='en' ? 'Other' : 'Другое'}</option>
+                    <option value="Information request">{lang==='en' ? 'Information request' : 'Запрос информации'}</option>
+                    <option value="Feedback">{lang==='en' ? 'Inspection' : 'Инспекция'}</option>
+                    <option value="Appointment">{lang==='en' ? 'Appointment' : 'Запись на прием'}</option>
+                    <option value="Quiz">{lang==='en' ? 'Quiz' : 'Экзамен'}</option>
+                    <option value="Product Order">{lang==='en' ? 'Product Order' : 'Заказ продукта'}</option>
+                    <option value="Education">{lang==='en' ? 'Education' : 'Образование'}</option>
+                    <option value="Hotel booking">{lang==='en' ? 'Hotel booking' : 'Бронирование отеля'}</option>
                 </select>
                 <input 
                     name="tags" 
@@ -140,7 +140,7 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                     value={Array.isArray(template.tags) ? template.tags.join(', ') : template.tags} 
                     onChange={handleTemplateChange} 
                 />
-                <CloudinaryUpload onUpload={(url) => setTemplate(prev => ({ ...prev, imageUrl: url }))}/>
+                <CloudinaryUpload onUpload={(url) => setTemplate(prev => ({ ...prev, imageUrl: url }))} lang={lang}/>
                 {template.imageUrl && <img src={template.imageUrl} alt="Preview" className="mt-2" style={{ maxWidth: '200px' }} />}
             </div>
 

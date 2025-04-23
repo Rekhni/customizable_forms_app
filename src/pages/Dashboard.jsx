@@ -9,6 +9,7 @@ export default function Dashboard({ isDark, lang }) {
   const [myTemplates, setMyTemplates] = useState([]);
   const [otherTemplates, setOtherTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isViewGallery, setIsViewGallery] = useState(true);
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user'));
   const isLoggedIn = !!token;
@@ -53,6 +54,21 @@ export default function Dashboard({ isDark, lang }) {
 
   return (
     <div className={`${isDark ? 'text-white' : 'text-dark'}`} style={{ padding: '2rem' }}>
+      <div className="d-flex gap-2 mb-3">
+        <button
+          className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'}`}
+          onClick={() => setIsViewGallery(true)}
+        >
+          <i className="bi bi-columns-gap"></i> Gallery
+        </button>
+        <button
+          className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'}`}
+          onClick={() => setIsViewGallery(false)}
+        >
+          <i className="bi bi-view-stacked"></i> List
+        </button>
+      </div>
+
       {isLoggedIn && (
         <div className="mb-3">
           <h2>
@@ -70,6 +86,7 @@ export default function Dashboard({ isDark, lang }) {
               lang={lang}
               setMyTemplates={setMyTemplates}
               setOtherTemplates={setOtherTemplates}
+              isViewGallery={isViewGallery}
             />
           )}
             {(!latestTemplates && !loading) && (<p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>)}
@@ -82,23 +99,32 @@ export default function Dashboard({ isDark, lang }) {
           <h2>
             {lang === 'en' ? 'My Templates' : 'Мои шаблоны'}
           </h2>
-          <Link to="/templates/new">
-            <button className={`rounded ${isDark ? 'text-white dark-mode border-success' : 'text-dark light-mode border-info'} mb-3`}>
-               {lang === 'en' ? 'New Template' : 'Новый Шаблон'}
-            </button>
-          </Link>
 
-          {myTemplates.length > 0 ? (
+          <div className="d-flex flex-column gap-2">
+            <Link to="/templates/new">
+              <button className={`rounded ${isDark ? 'text-white dark-mode border-success' : 'text-dark light-mode border-info'} mb-3`}>
+                {lang === 'en' ? 'New Template' : 'Новый Шаблон'}
+              </button>
+            </Link>
+
+            {loading && (
+              <div class="spinner-border text-dark" role="status">
+                <span class="sr-only"></span>
+              </div>
+            )}
+          </div>
+
+          {(myTemplates.length > 0 && !loading) && (
             <TemplateGrid 
               templates={myTemplates} 
               isDark={isDark}
               lang={lang}
               setMyTemplates={setMyTemplates}
               setOtherTemplates={setOtherTemplates}
+              isViewGallery={isViewGallery}
             />
-          ) : (
-            <p>{lang === 'en' ? 'No templates created yet' : 'Вы пока не создали свои шаблоны'}.</p>
           )}
+            {(!myTemplates && !loading) && (<p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>)}
 
           <hr className="my-4" />
         </>
@@ -120,6 +146,7 @@ export default function Dashboard({ isDark, lang }) {
         lang={lang}
         setMyTemplates={setMyTemplates}
         setOtherTemplates={setOtherTemplates}
+        isViewGallery={isViewGallery}
       />
     </div>
   );

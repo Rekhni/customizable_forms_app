@@ -123,6 +123,7 @@ export default function ViewTemplate({ isDark, lang }) {
                 headers: { Authorization: `Bearer ${token}` }
             })
 
+            setNewComment('');
             setComments("");
             fetchComments();
         } catch(err) {
