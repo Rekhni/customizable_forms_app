@@ -19,7 +19,10 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
         allowedUsers: []
     });
 
+    const navigate = useNavigate();
+    const token = localStorage.getItem('token');  
     const [userResults, setUserResults] = useState([]);
+    const [userSearch, setUserSearch] = useState('');
     const [sortBy, setSortBy] = useState('name');
     const [questions, setQuestions] = useState([]);
     const [currentQuestion, setCurrentQuestion] = useState({
@@ -33,15 +36,6 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
     useEffect(() => {
         checkIfBlocked(navigate);
     })
-
-    useEffect(() => {
-        return () => {
-          debouncedSearch.cancel();
-        };
-      }, [debouncedSearch]);
-
-    const navigate = useNavigate();
-    const token = localStorage.getItem('token');
 
     const debouncedSearch = useMemo(() => 
         debounce(async (query) => {
@@ -61,7 +55,13 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
           }
         }, 300) // 300ms delay
       , [API, token]);
-      
+
+    useEffect(() => {
+        return () => {
+          debouncedSearch.cancel();
+        };
+    }, [debouncedSearch]);
+
 
     const handleTemplateChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -83,6 +83,9 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                 allowedUsers: [...prev.allowedUsers, user]
             }));
         }
+
+        setUserSearch('');    
+        setUserResults([]);   
     };
 
     const removeUser = (id) => {
@@ -197,12 +200,13 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                 />
                 <div>
                     <label>
-                        <input 
+                        <input
                             type="checkbox" 
                             checked={template.isPublic}
                             onChange={(e) => setTemplate(prev => ({ ...prev, isPublic: e.target.checked }))}
                         />
-                        {lang === 'en' ? 'Public template' : 'Публичный шаблон'}
+                          <span> </span>
+                          {lang === 'en' ? 'Public template' : 'Публичный шаблон'}
                     </label>
                 </div>
                 {!template.isPublic && (
@@ -210,12 +214,16 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                         <div style={{ position: 'relative' }}>
                             <input 
                                 type="text"
+                                value={userSearch}
                                 placeholder={lang === 'en' ? 'Search users by name or email' : 'Поиск пользователей по имени или почте'}
-                                onChange={handleUserSearch}
+                                onChange={(e) => {
+                                    setUserSearch(e.target.value)
+                                    handleUserSearch(e)
+                                }}
                                 className="form-control"
                             />
                             {userResults.length > 0 && (
-                                <ul className="autocomplete-results">
+                                <ul className="autocomplete-results bg-muted text-dark">
                                     {userResults.map((user) => (
                                         <li key={user.id} onClick={() => addUser(user)}>
                                             {user.name} {user.email}
@@ -235,7 +243,9 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                             {[...template.allowedUsers].sort((a,b) => a[sortBy].localeCompare(b[sortBy])).map(user => (
                                 <li key={user.id}>
                                     {user.name} {user.email}
-                                    <button onClick={() => removeUser(user.id)}>x</button>
+                                    <button className="rounded bg-danger text-white"  onClick={() => removeUser(user.id)} style={{ marginLeft: '10px' }}>
+                                        <i class="bi bi-x"></i>
+                                    </button>
                                 </li>
                             ))}
                         </ul>
