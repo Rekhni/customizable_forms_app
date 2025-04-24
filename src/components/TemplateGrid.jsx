@@ -38,7 +38,7 @@ export function TemplateGrid({ templates, isDark, lang, setMyTemplates, setOther
           style={{
             display: isViewGallery ? "block" : "flex",
             alignItems: isViewGallery ? "initial" : "center",
-            padding: "1rem",
+            padding: !isViewGallery ? "1rem" : null,
             gap: "1rem",
           }}
         >
@@ -55,11 +55,11 @@ export function TemplateGrid({ templates, isDark, lang, setMyTemplates, setOther
             />
           </Link>)}
 
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1, ...(isViewGallery ? { padding: '0 15px 10px 15px' } : {})  }}>
             <div className={`${!isViewGallery ? 'd-flex justify-content-between' : ''}`}>
               <h4 className={`${isViewGallery ? 'mt-2' : ''}`}>{t.title || "Untitled Form"}</h4>
               <div className={`${!isViewGallery ? 'd-flex gap-3' : ''}`}>
-                <p>{t.topic || "Other"}</p>
+                <p className="m-0">{t.topic || "Other"}</p>
                 <p>{new Date(t.createdAt).toLocaleDateString()}</p>
               </div>
             </div>

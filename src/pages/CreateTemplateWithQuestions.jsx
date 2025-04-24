@@ -133,8 +133,12 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
             const payload = {
                 ...template,
                 tags: template.tags.split(',').map(t => t.trim()),
-                allowedUsersIds: template.allowedUsers.map(u => u.id) 
             };
+
+            if (!template.isPublic) {
+                payload.allowedUserIds = template.allowedUsers.map(u => u.id);
+              }
+
             setSubmitLoading(true);
             const res = await axios.post(`${API}/templates`, payload, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -142,21 +146,25 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
 
             const templateId = res.data.id;
 
+            console.log("Submitting questions:", questions);
             for (let i = 0; i < questions.length; i++) {
                 const q = questions[i];
-                await axios.post(`${API}/questions/${templateId}`, {
-                    type: q.type,
-                    title: q.title,
-                    description: q.description,
-                    showInTable: q.showInTable,
-                    order: i,
-                    options: q.type === 'checkbox' ? q.options : null
+                const res = await axios.post(`${API}/questions/${templateId}`, {
+                  type: q.type,
+                  title: q.title,
+                  description: q.description,
+                  showInTable: q.showInTable,
+                  order: i,
+                  options: q.type === 'checkbox' ? q.options : null
                 }, {
-                    headers: { Authorization: `Bearer ${token}` }
+                  headers: { Authorization: `Bearer ${token}` }
                 });
-            }
-            setSubmitLoading(false);
+
+                console.log("Template created:", res.data);
+              }
+            console.log("Navigation triggered");
             navigate('/');
+            setSubmitLoading(false);
         } catch(err) {
             console.error(err);
         } finally {

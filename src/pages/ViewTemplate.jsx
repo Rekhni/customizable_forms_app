@@ -168,6 +168,7 @@ export default function ViewTemplate({ isDark, lang }) {
                             {q.type === 'single-line' && (
                                 <input 
                                     type="text" 
+                                    placeholder={lang==='en' ? 'Answer' : 'Ответ'}
                                     className="form-control"
                                     value={formAnswers[q.id] || ''}
                                     onChange={(e) => handleAnswerChange(q.id, e.target.value)} 
@@ -176,6 +177,7 @@ export default function ViewTemplate({ isDark, lang }) {
                             {q.type === 'multi-line' && (
                                 <textarea 
                                     type="text" 
+                                    placeholder={lang==='en' ? 'Answer' : 'Ответ'}
                                     className="form-control"
                                     value={formAnswers[q.id || '']}
                                     onChange={(e) => handleAnswerChange(q.id, e.target.value)} 
@@ -184,6 +186,7 @@ export default function ViewTemplate({ isDark, lang }) {
                             {q.type === 'integer' && (
                                 <input 
                                     type="number" 
+                                    placeholder={lang==='en' ? 'Answer' : 'Ответ'}
                                     className="form-control"
                                     value={formAnswers[q.id || '']}
                                     onChange={(e) => handleAnswerChange(q.id, e.target.value)} 
