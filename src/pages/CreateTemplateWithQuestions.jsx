@@ -5,6 +5,7 @@ import { checkIfBlocked } from "../utils/checkBlocked.js";
 import CloudinaryUpload from "../components/CloudinaryUpload.jsx";
 
 export default function CreateTemplateWithQuestions({ isDark, lang }) {
+    const API = import.meta.env.VITE_API_URL;
     const [submitLoading, setSubmitLoading] = useState(false);
     
     const [template, setTemplate] = useState({
@@ -12,9 +13,13 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
         description: '',
         topic: 'Other',
         tags: '',
-        imageUrl: ''
+        imageUrl: '',
+        isPublic: true,
+        allowedUsers: []
     });
 
+    const [userResults, setUserResults] = useState([]);
+    const [sortBy, setSortBy] = useState('name');
     const [questions, setQuestions] = useState([]);
     const [currentQuestion, setCurrentQuestion] = useState({
         type: 'single-line',
@@ -38,6 +43,38 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
             [name]: type === 'checkbox' ? checked : value
         }));
     };
+
+    const handleUserSearch = async (e) => {
+        const query = e.target.value;
+        if (query.length < 2) return;
+
+        try {
+            const res = await axios.get(`${API}/users/search?query=${query}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setUserResults(res.data);
+        } catch(err) {
+            console.error('User search failed:', err);
+        }
+    }
+
+    const addUser = (user) => {
+        if (!template.allowedUsers.find(u => u.id === user.id)) {
+            setTemplate(prev => ({
+                ...prev,
+                allowedUsers: [...prev.allowedUsers, user]
+            }));
+        }
+    };
+
+    const removeUser = (id) => {
+        setTemplate(prev => ({
+            ...prev,
+            allowedUsers: prev.allowedUsers.filter(u => u.id !== id)
+        }))
+    }
+
 
     const handleQuestionChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -69,13 +106,14 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
     };
 
     const handleSubmit = async (e) => {
-        const API = import.meta.env.VITE_API_URL;
+        
         e.preventDefault();
 
         try {
             const payload = {
                 ...template,
-                tags: template.tags.split(',').map(t => t.trim())
+                tags: template.tags.split(',').map(t => t.trim()),
+                allowedUsersIds: template.allowedUsers.map(u => u.id) 
             };
             setSubmitLoading(true);
             const res = await axios.post(`${API}/templates`, payload, {
@@ -140,6 +178,47 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                     value={Array.isArray(template.tags) ? template.tags.join(', ') : template.tags} 
                     onChange={handleTemplateChange} 
                 />
+                <div>
+                    <label>
+                        <input 
+                            type="checkbox" 
+                            checked={template.isPublic}
+                            onChange={(e) => setTemplate(prev => ({ ...prev, isPublic: e.target.checked }))}
+                        />
+                        {lang === 'en' ? 'Public template' : 'Публичный шаблон'}
+                    </label>
+                </div>
+                {!template.isPublic && (
+                    <>
+                        <input 
+                            type="text"
+                            placeholder={lang === 'en' ? 'Search users by name or email' : 'Поиск пользователей по имени или почте'}
+                            onChange={handleUserSearch}
+                        />
+                        <ul className="autocomplete-results">
+                            {userResults.map((user) => (
+                                <li key={user.id} onClick={() => addUser(user)}>
+                                    {user.name} {user.email}
+                                </li>
+                            ))}
+                        </ul>
+
+                        <div>
+                            <button onClick={() => setSortBy(sortBy === 'name' ? 'email' : 'name')}>
+                                {lang === 'en' ? 'Sort by' : 'Сортировать по'}: {sortBy}
+                            </button>
+                        </div>
+
+                        <ul>
+                            {[...template.allowedUsers].sort((a,b) => a[sortBy].localeCompare(b[sortBy])).map(user => (
+                                <li key={user.id}>
+                                    {user.name} {user.email}
+                                    <button onClick={() => removeUser(user.id)}>x</button>
+                                </li>
+                            ))}
+                        </ul>
+                    </>
+                )}
                 <CloudinaryUpload onUpload={(url) => setTemplate(prev => ({ ...prev, imageUrl: url }))} lang={lang}/>
                 {template.imageUrl && <img src={template.imageUrl} alt="Preview" className="mt-2" style={{ maxWidth: '200px' }} />}
             </div>
