@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { checkIfBlocked } from "../utils/checkBlocked.js";
 import CloudinaryUpload from "../components/CloudinaryUpload.jsx";
+import debounce from 'lodash.debounce';
 
 export default function CreateTemplateWithQuestions({ isDark, lang }) {
     const API = import.meta.env.VITE_API_URL;
@@ -33,8 +34,34 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
         checkIfBlocked(navigate);
     })
 
+    useEffect(() => {
+        return () => {
+          debouncedSearch.cancel();
+        };
+      }, [debouncedSearch]);
+
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+
+    const debouncedSearch = useMemo(() => 
+        debounce(async (query) => {
+          if (query.length < 2) {
+            setUserResults([]);
+            return;
+          }
+      
+          try {
+            const res = await axios.get(`${API}/users/search?query=${query}`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+      
+            setUserResults(res.data);
+          } catch (err) {
+            console.error('User search failed:', err);
+          }
+        }, 300) // 300ms delay
+      , [API, token]);
+      
 
     const handleTemplateChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -46,17 +73,7 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
 
     const handleUserSearch = async (e) => {
         const query = e.target.value;
-        if (query.length < 2) return;
-
-        try {
-            const res = await axios.get(`${API}/users/search?query=${query}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            setUserResults(res.data);
-        } catch(err) {
-            console.error('User search failed:', err);
-        }
+        debouncedSearch(query);
     }
 
     const addUser = (user) => {
@@ -190,18 +207,23 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
                 </div>
                 {!template.isPublic && (
                     <>
-                        <input 
-                            type="text"
-                            placeholder={lang === 'en' ? 'Search users by name or email' : 'Поиск пользователей по имени или почте'}
-                            onChange={handleUserSearch}
-                        />
-                        <ul className="autocomplete-results">
-                            {userResults.map((user) => (
-                                <li key={user.id} onClick={() => addUser(user)}>
-                                    {user.name} {user.email}
-                                </li>
-                            ))}
-                        </ul>
+                        <div style={{ position: 'relative' }}>
+                            <input 
+                                type="text"
+                                placeholder={lang === 'en' ? 'Search users by name or email' : 'Поиск пользователей по имени или почте'}
+                                onChange={handleUserSearch}
+                                className="form-control"
+                            />
+                            {userResults.length > 0 && (
+                                <ul className="autocomplete-results">
+                                    {userResults.map((user) => (
+                                        <li key={user.id} onClick={() => addUser(user)}>
+                                            {user.name} {user.email}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
 
                         <div>
                             <button onClick={() => setSortBy(sortBy === 'name' ? 'email' : 'name')}>
