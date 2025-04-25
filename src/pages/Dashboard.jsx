@@ -37,7 +37,13 @@ export default function Dashboard({ isDark, lang }) {
 
         if (isLoggedIn && user) {
           setMyTemplates(allTemplates.filter(t => t.userId === user.id));
-          setOtherTemplates(allTemplates.filter(t => t.userId !== user.id));
+          setOtherTemplates(
+            allTemplates.filter(
+              t =>
+                t.userId !== user.id &&
+                (t.isPublic || (t.allowedUsers || []).some(u => u.id === user.id))
+            )
+          );
         } else {
           setOtherTemplates(allTemplates); // guest
         }
@@ -97,7 +103,7 @@ export default function Dashboard({ isDark, lang }) {
               isViewGallery={isViewGallery}
             />
           )}
-            {(!latestTemplates && !loading) && (<p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>)}
+            {(!latestTemplates || !loading) && (<p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>)}
           
         </div>
       )}
@@ -132,7 +138,7 @@ export default function Dashboard({ isDark, lang }) {
               isViewGallery={isViewGallery}
             />
           )}
-            {(!myTemplates && !loading) && (<p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>)}
+            {(!myTemplates || !loading) || (<p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>)}
 
           <hr className="my-4" />
         </>
@@ -156,6 +162,7 @@ export default function Dashboard({ isDark, lang }) {
         setOtherTemplates={setOtherTemplates}
         isViewGallery={isViewGallery}
       />
+      {(!myTemplates || !loading) && (<p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>)}
     </div>
   );
 };
