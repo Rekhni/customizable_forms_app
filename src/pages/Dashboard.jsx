@@ -27,21 +27,14 @@ export default function Dashboard({ isDark, lang }) {
 
         const allTemplates = res.data;
 
-        console.log("Returned templates:", allTemplates.map(t => ({
-          id: t.id,
-          title: t.title,
-          isPublic: t.isPublic,
-          userId: t.userId,
-          allowedUsers: t.allowedUsers?.map(u => u.id)
-        })));
-
         if (isLoggedIn && user) {
+          const isAdmin = user?.role === 'admin';
           setMyTemplates(allTemplates.filter(t => t.userId === user.id));
           setOtherTemplates(
             allTemplates.filter(
               t =>
                 t.userId !== user.id &&
-                (t.isPublic || (t.allowedUsers || []).some(u => u.id === user.id))
+                (isAdmin || t.isPublic || (t.allowedUsers || []).some(u => u.id === user.id))
             )
           );
         } else {
