@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from 'axios';
 import { Link } from "react-router-dom";
 
-export default function ViewTemplate({ isDark, lang }) {
+export default function ViewTemplate({ isDark, lang, backupImg }) {
     const { id: templateId } = useParams();
     const [template, setTemplate] = useState(null);
     const [questions, setQuestions] = useState([]);
@@ -147,7 +147,7 @@ export default function ViewTemplate({ isDark, lang }) {
                 </div>
             )}
             {!loading && (<div className={`mx-auto rounded shadow ${isDark ? 'dark-mode' : 'light-mode'} border-info`} style={{ height: '100%', maxWidth: '700px', marginTop: '20px', padding: '30px' }}>
-                <img src={template.imageUrl} alt="template img" className="rounded" style={{ objectFit: 'cover', width: '100%', height: '200px' }}/>
+                <img src={template.imageUrl || backupImg} alt="template img" className="rounded" style={{ objectFit: 'cover', width: '100%', height: '200px' }}/>
                 {(template && (user?.id === template.userId || isAdmin)) && (
                     <Link to={`/template/${template.id}/edit`}>
                         <button className={`rounded btn ${isDark ? 'btn-outline-dark border-white text-white' : 'btn-outline-light border-dark text-dark'}  mt-3 mb-3`} style={{ marginTop: '10px' }}><i className="bi bi-pencil"></i> {lang === 'en' ? 'Edit' : 'Редактировать'}</button>

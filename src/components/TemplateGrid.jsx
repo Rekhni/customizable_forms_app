@@ -1,27 +1,9 @@
 import { Link } from "react-router-dom";
-import axios from "axios";
 
-export function TemplateGrid({ templates, isDark, lang, setMyTemplates, setOtherTemplates, isViewGallery }) {
+export function TemplateGrid({ templates, isDark, lang, isViewGallery, backupImg, selectedTemplates, setSelectedTemplates }) {
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'admin';
-    const token = localStorage.getItem('token');
     const API = import.meta.env.VITE_API_URL;
-
-    const handleDeleteTemplate = async (templateId) => {
-      if (!confirm(`${lang === 'en' ? 'Are you sure you want to delete this template?' : 'Вы уверены что хотите удалить шаблон?'}`)) return;
-  
-      try {
-        await axios.delete(`${API}/templates/${templateId}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-  
-        setMyTemplates((prev) => prev.filter(t => t.id !== templateId));
-        setOtherTemplates((prev) => prev.filter(t => t.id !== templateId));
-      } catch(err) {
-        console.error("Delete failed", err);
-        alert("Delete failed");
-      }
-    }
     
     return (
       <div
@@ -44,7 +26,7 @@ export function TemplateGrid({ templates, isDark, lang, setMyTemplates, setOther
         >
           {isViewGallery && (<Link to={`/template/${t.id}/preview`} style={{ textDecoration: "none" }}>
             <img
-              src={t.imageUrl || "https://via.placeholder.com/150"}
+              src={t.imageUrl || backupImg}
               alt={t.title}
               style={{
                 width: isViewGallery ? "100%" : "150px",
@@ -67,11 +49,25 @@ export function TemplateGrid({ templates, isDark, lang, setMyTemplates, setOther
               <Link to={`/template/${t.id}/preview`}>
                 <button className="btn btn-primary">{lang === "en" ? "View" : "Посмотреть"}</button>
               </Link>
-              {(isAdmin || user?.id === t.userId) && (
-                <button className="btn btn-danger" onClick={() => handleDeleteTemplate(t.id)}>
-                  <i className="bi bi-trash"></i>
-                </button>
-              )}
+              <div className="d-flex align-items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={selectedTemplates.includes(t.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedTemplates(prev => [...prev, t.id]);
+                    } else {
+                      setSelectedTemplates(prev => prev.filter(id => id !== t.id));
+                    }
+                  }}
+                  disabled={!(isAdmin || user?.id === t.userId)}
+                />
+                {(isAdmin || user?.id === t.userId) && (
+                  <small className="text-muted">
+                    {lang === 'en' ? 'Select' : 'Выбрать'}
+                  </small>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function FormDetails({ isDark, lang }) {
+export default function FormDetails({ isDark, lang, backupImg }) {
     const { formId } = useParams();
     const [form, setForm] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -36,7 +36,7 @@ export default function FormDetails({ isDark, lang }) {
                 </div>
             )}
             {!loading && (<div className={`m-4 d-flex flex-column justify-content-center align-items-center border-info rounded shadow text-center ${isDark ? 'dark-mode' : 'light-mode'}`}>
-                <img src={form.template?.imageUrl} alt="form image" className="rounded" style={{ objectFit: 'cover', width: '100%', height: '200px' }}/>
+                <img src={form.template?.imageUrl || backupImg} alt="form image" className="rounded" style={{ objectFit: 'cover', width: '100%', height: '200px' }}/>
                 <h2 style={{ fontSize: '50px' }}>{form.template?.title}</h2>
                 <p className="pb-0">{new Date(form.createdAt).toLocaleDateString()} {lang === 'en' ? 'by' : 'от'} {form.user?.name || form.user?.email}</p>
                 
