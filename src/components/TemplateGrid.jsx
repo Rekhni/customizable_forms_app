@@ -52,7 +52,7 @@ export function TemplateGrid({ templates, isDark, lang, isViewGallery, backupImg
               <div className="d-flex align-items-center gap-2">
                 <input
                   type="checkbox"
-                  checked={selectedTemplates.includes(t.id)}
+                  checked={selectedTemplates?.includes(t.id)}
                   onChange={(e) => {
                     if (e.target.checked) {
                       setSelectedTemplates(prev => [...prev, t.id]);
