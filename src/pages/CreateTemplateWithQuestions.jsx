@@ -146,7 +146,6 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
 
             const templateId = res.data.id;
 
-            console.log("Submitting questions:", questions);
             for (let i = 0; i < questions.length; i++) {
                 const q = questions[i];
                 const res = await axios.post(`${API}/questions/${templateId}`, {
@@ -162,7 +161,6 @@ export default function CreateTemplateWithQuestions({ isDark, lang }) {
 
                 console.log("Template created:", res.data);
               }
-            console.log("Navigation triggered");
             navigate('/');
             setSubmitLoading(false);
         } catch(err) {
