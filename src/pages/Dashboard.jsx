@@ -100,7 +100,7 @@ export default function Dashboard({ isDark, lang, backupImg }) {
           <i className="bi bi-view-stacked"></i> {lang==='en' ? 'List' : 'Список'}
         </button>
       </div>
-      <div className="d-flex gap-3 mb-3">
+      {isLoggedIn && (<div className="d-flex gap-3 mb-3">
         <button
           className={`rounded ${isDark ? 'dark-mode text-white' : 'light-mode text-dark'} ${activeCategory === 'latest' ? 'bg-success text-white' : 'border-success'}`}  
           onClick={() => setActiveCategory('latest')}
@@ -119,70 +119,78 @@ export default function Dashboard({ isDark, lang, backupImg }) {
         >
           {lang === 'en' ? 'Other Templates' : 'Другие шаблоны'}
         </button>
-      </div>
+      </div>)}
 
-      {isLoggedIn && (
-        <>
-          <h2>
-            {activeCategory === 'latest' 
+      <>
+        <h2>
+          {isLoggedIn 
+            ? activeCategory === 'latest' 
               ? (lang === 'en' ? 'Latest Templates' : 'Последние шаблоны')
               : activeCategory === 'my' 
               ? (lang === 'en' ? 'My Templates' : 'Мои шаблоны')
-              : (lang === 'en' ? 'Other Templates' : 'Другие шаблоны')}
-          </h2>
-          {selectedTemplates.length > 0 && (
-            <button
-              className="btn btn-danger my-2"
-              onClick={handleDeleteSelected}
-            >
-              {loadingDeletion 
-              ? (lang === 'en' ? 'Deleting...' : 'Удаляются...') 
-              : (lang === 'en' ? `Delete Selected (${selectedTemplates.length})` : `Удалить выбранные (${selectedTemplates.length})`)}
+              : (lang === 'en' ? 'Other Templates' : 'Другие шаблоны')
+            : (lang === 'en' ? 'Templates' : 'Шаблоны') // Title for guests
+          }
+        </h2>
+
+        {isLoggedIn && selectedTemplates.length > 0 && (
+          <button
+            className="btn btn-danger my-2"
+            onClick={handleDeleteSelected}
+          >
+            {loadingDeletion 
+            ? (lang === 'en' ? 'Deleting...' : 'Удаляются...') 
+            : (lang === 'en' ? `Delete Selected (${selectedTemplates.length})` : `Удалить выбранные (${selectedTemplates.length})`)}
+          </button>
+        )}
+
+        {isLoggedIn && activeCategory === 'my' && (
+          <Link to="/templates/new">
+            <button className={`rounded ${isDark ? 'text-white dark-mode border-success' : 'text-dark light-mode border-info'} mb-3`}>
+              {lang === 'en' ? 'New Template' : 'Новый Шаблон'}
             </button>
-          )}
+          </Link>
+        )}
 
-          {activeCategory === 'my' && (
-            <Link to="/templates/new">
-              <button className={`rounded ${isDark ? 'text-white dark-mode border-success' : 'text-dark light-mode border-info'} mb-3`}>
-                {lang === 'en' ? 'New Template' : 'Новый Шаблон'}
-              </button>
-            </Link>
-          )}
+        {loading && (
+          <div className="spinner-border text-dark" role="status">
+            <span className="sr-only"></span>
+          </div>
+        )}
 
-          {loading && (
-            <div class="spinner-border text-dark" role="status">
-              <span class="sr-only"></span>
-            </div>
-          )}
-          {!loading && (
-            <TemplateGrid 
-              backupImg={backupImg}
-              templates={
-                activeCategory === 'latest'
-                ? latestTemplates 
-                : activeCategory === 'my'
-                ? myTemplates
-                : otherTemplates
-              }
-              selectedTemplates={selectedTemplates}
-              setSelectedTemplates={setSelectedTemplates} 
-              isDark={isDark}
-              lang={lang}
-              setMyTemplates={setMyTemplates}
-              setOtherTemplates={setOtherTemplates}
-              isViewGallery={isViewGallery}
-            />
-          )}
+        {!loading && (
+          <TemplateGrid 
+            backupImg={backupImg}
+            templates={
+              isLoggedIn
+                ? activeCategory === 'latest'
+                  ? latestTemplates
+                  : activeCategory === 'my'
+                  ? myTemplates
+                  : otherTemplates
+                : otherTemplates // 👈 Guest users see otherTemplates (only public templates are there)
+            }
+            selectedTemplates={selectedTemplates}
+            setSelectedTemplates={setSelectedTemplates} 
+            isDark={isDark}
+            lang={lang}
+            setMyTemplates={setMyTemplates}
+            setOtherTemplates={setOtherTemplates}
+            isViewGallery={isViewGallery}
+          />
+        )}
 
-          {(!loading && (
+        {(!loading && (
+          (isLoggedIn && (
             (activeCategory === 'latest' && latestTemplates.length === 0) ||
             (activeCategory === 'my' && myTemplates.length === 0) ||
             (activeCategory === 'other' && otherTemplates.length === 0)
-          )) && (
-            <p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>
-          )}
-        </>
-      )}
+          )) || (!isLoggedIn && otherTemplates.length === 0)
+        )) && (
+          <p>{lang === 'en' ? 'No templates created yet' : 'Пока шаблонов нет'}.</p>
+        )}
+      </>
+
     </div>
   );
 };
