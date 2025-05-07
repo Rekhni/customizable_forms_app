@@ -46,6 +46,8 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
                 <button onClick={onToggleLanguage} className={`btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'} btn-sm ms-auto`} style={{ marginLeft: '10px' }}>
                     {lang === 'en' ? <span>ru</span> : <span>en</span>}
                 </button>
+                
+
         </div>
 
         <Link className={`navbar-brand ms-3 ${isDark ? 'text-white' : 'text-dark'}`} to="/" style={{ fontSize: '15px' }}>
@@ -64,6 +66,9 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
 
             {(isAdmin || user?.id) && (
                 <>
+                <li className="nav-item">
+                    <Link to="/support" className={`nav-link ${isDark ? 'text-white' : 'text-dark'}`}>{lang === 'en' ? 'Create Support Ticket' : 'Создать тикет'}</Link>
+                </li>
                 <li className="nav-item">
                     <Link to="/filled-forms" className={`nav-link ${isDark ? 'text-white' : 'text-dark'}`}>
                         {lang === 'en' ? 'Filled-out Forms' : 'Заполненные формы'}

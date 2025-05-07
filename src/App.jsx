@@ -11,6 +11,7 @@ import FillOutForms from "./pages/FillOutForms";
 import Users from './pages/Users';
 import SearchResults from "./pages/SearchResults";
 import FormDetails from "./pages/FormDetails";
+import SupportTicket from "./pages/SupportTicket";
 import './App.css';
 import { useState, useEffect } from "react";
 
@@ -42,6 +43,7 @@ function App() {
       <div className={`${isDark ? 'bg-theme-dark' : 'bg-theme-light'}`} style={{ minHeight: '100vh' }}>
         <Routes>
           <Route path="/" element={<Dashboard isDark={isDark} lang={language} backupImg={backupImg} />} />
+          <Route path="/support" element={<SupportTicket isDark={isDark} lang={language} />} />
           <Route path="/login" element={<Login isDark={isDark} lang={language} />}/>
           <Route path="/register" element={<Register isDark={isDark} lang={language} />} />
           <Route path="/templates/new" element={<PrivateRoute> <CreateTemplateWithQuestions isDark={isDark} lang={language} /> </PrivateRoute>}/>
