@@ -12,6 +12,9 @@ import Users from './pages/Users';
 import SearchResults from "./pages/SearchResults";
 import FormDetails from "./pages/FormDetails";
 import SupportTicket from "./pages/SupportTicket";
+import SfCallback from './pages/SfCallback';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import { useState, useEffect } from "react";
 
@@ -38,11 +41,14 @@ function App() {
 
 
   return (
+    
     <Router>
+      <ToastContainer position="top-right" autoClose={4000} />
       <Navbar isDark={isDark} onToggleTheme={() => setIsDark(prev => !prev)} lang={language} onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'ru' : 'en'))}/>
       <div className={`${isDark ? 'bg-theme-dark' : 'bg-theme-light'}`} style={{ minHeight: '100vh' }}>
         <Routes>
           <Route path="/" element={<Dashboard isDark={isDark} lang={language} backupImg={backupImg} />} />
+          <Route path="/sf-callback" element={<SfCallback isDark={isDark} lang={language}/>} />
           <Route path="/support" element={<SupportTicket isDark={isDark} lang={language} />} />
           <Route path="/login" element={<Login isDark={isDark} lang={language} />}/>
           <Route path="/register" element={<Register isDark={isDark} lang={language} />} />

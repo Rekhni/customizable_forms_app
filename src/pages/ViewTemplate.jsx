@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from 'axios';
 import { Link } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 export default function ViewTemplate({ isDark, lang, backupImg }) {
     const { id: templateId } = useParams();
@@ -88,16 +89,16 @@ export default function ViewTemplate({ isDark, lang, backupImg }) {
             setFormAnswers({});
         } catch(err) {
             console.error(err);
-            alert('Failed to submit form');
+            toast.error('Failed to submit form');
         } finally {
             setSubmitLoading(false);
-            alert('Form submitted successfully!');
+            toast.success('Form submitted successfully!');
         }
     }
 
     const toggleLike = async () => {
         if (!token) {
-            alert("Please login to like templates.");
+            toast.info("Please login to like templates.");
             return;
         }
 

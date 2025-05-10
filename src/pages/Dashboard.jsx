@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { checkIfBlocked } from "../utils/checkBlocked.js";
 import { useNavigate } from "react-router-dom";
 import { TemplateGrid } from "../components/TemplateGrid.jsx";
+import { toast } from 'react-toastify';
 
 export default function Dashboard({ isDark, lang, backupImg }) {
   const [myTemplates, setMyTemplates] = useState([]);
@@ -69,10 +70,10 @@ export default function Dashboard({ isDark, lang, backupImg }) {
       setMyTemplates(prev => prev.filter(t => !selectedTemplates.includes(t.id)));
       setOtherTemplates(prev => prev.filter(t => !selectedTemplates.includes(t.id)));
       setSelectedTemplates([]);
-      alert(lang === 'en' ? 'Templates deleted successfully' : 'Шаблоны успешно удалены');
+      toast.success(lang === 'en' ? 'Templates deleted successfully' : 'Шаблоны успешно удалены');
     } catch (err) {
       console.error('Failed to delete templates:', err);
-      alert(lang === 'en' ? 'Failed to delete templates' : 'Не удалось удалить шаблоны');
+      toast.error(lang === 'en' ? 'Failed to delete templates' : 'Не удалось удалить шаблоны');
     } finally {
       setLoadingDeletion(false);
     }
@@ -86,6 +87,16 @@ export default function Dashboard({ isDark, lang, backupImg }) {
 
   return (
     <div className={`${isDark ? 'text-white' : 'text-dark'}`} style={{ padding: '2rem' }}>
+        {isLoggedIn && (
+          <button
+            className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} mb-3`}
+            onClick={() => {
+              window.open(`${API.replace('/api', '')}/auth/sf/login`, '_blank');
+            }}
+          >
+            <i className="bi bi-cloud-upload"></i> {lang === 'en' ? 'Sync to Salesforce' : 'Синхронизация с Salesforce'}
+          </button>
+      )}
       <div className="d-flex gap-2 mb-3">
         <button
           className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} ${isViewGallery ? 'bg-success text-white' : 'border-success'} rounded border-success`}

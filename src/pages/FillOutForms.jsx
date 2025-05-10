@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 export default function FillOutForms({ isDark, lang }) {
     const [forms, setForms] = useState([]);
@@ -40,7 +41,7 @@ export default function FillOutForms({ isDark, lang }) {
             setSelectedForms([]);
         } catch(err) {
             console.error("Failed to delete forms:", err);
-            alert(lang === 'en' ? 'Delete failed' : 'Ошибка удаления')
+            toast.error(lang === 'en' ? 'Delete failed' : 'Ошибка удаления')
         }
     }
 

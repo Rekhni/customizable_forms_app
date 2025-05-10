@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { io } from 'socket.io-client';
+import { toast } from 'react-toastify';
 import '../App.css';
 
 export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }) {
@@ -7,6 +9,21 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
     const isAdmin = user?.role === 'admin';
+    const API = import.meta.env.VITE_API_URL;
+
+    useEffect(() => {
+        const socket = io(import.meta.env.VITE_API_URL.replace('/api', ''), {
+            transports: ['websocket'],
+          });
+
+        socket.on('new_ticket', (data) => {
+            if (isAdmin) {
+                const { userName, summary, priority } = data;
+                toast.info(`📩 New Ticket from ${userName}: "${summary}" [${priority}]`);            }
+        });
+
+        return () => socket.disconnect();
+    }, []);
     
     const [search, setSearch] = useState('');
 

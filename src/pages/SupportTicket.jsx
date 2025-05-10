@@ -1,6 +1,7 @@
 import { useState } from 'react';
 // import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export default function SupportTicket({ isDark, lang }) {
   const [summary, setSummary] = useState('');
@@ -29,13 +30,13 @@ export default function SupportTicket({ isDark, lang }) {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      alert(lang === 'en' ? 'Ticket submitted successfully' : 'Заявка успешно отправлена');
+      toast.success(lang === 'en' ? 'Ticket submitted successfully' : 'Заявка успешно отправлена');
       setFileLink(res.data.fileLink);
       setSummary('');
       setPriority('Average');
     } catch (err) {
       console.error("Submission failed:", err);
-      alert(lang === 'en' ? 'Failed to submit ticket' : 'Не удалось отправить заявку');
+      toast.error(lang === 'en' ? 'Failed to submit ticket' : 'Не удалось отправить заявку');
     } finally {
       setSubmitting(false);
     }

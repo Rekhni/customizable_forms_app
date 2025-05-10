@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from 'react-dropzone';
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 export default function CloudinaryUpload({ onUpload, isDark, lang }) {
     const [loading, setLoading] = useState(false);
@@ -21,7 +22,7 @@ export default function CloudinaryUpload({ onUpload, isDark, lang }) {
             onUpload(res.data.secure_url);
         } catch(err) {
             console.error("Image upload failed", err);
-            alert('Image upload failed');
+            toast.error('Image upload failed');
         } finally {
             setLoading(false);
         }
