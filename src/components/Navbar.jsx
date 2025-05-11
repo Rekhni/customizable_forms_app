@@ -23,7 +23,7 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
         });
 
         return () => socket.disconnect();
-    }, []);
+    }, [user, isAdmin]);
     
     const [search, setSearch] = useState('');
 
