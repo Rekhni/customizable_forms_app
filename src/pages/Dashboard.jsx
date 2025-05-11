@@ -90,6 +90,32 @@ export default function Dashboard({ isDark, lang, backupImg }) {
         {isLoggedIn && (
           <button
             className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} mb-3`}
+            onClick={async () => {
+              try {
+                const res = await axios.get(`${API}/users/token`, {
+                  headers: { Authorization: `Bearer ${token}` }
+                });
+                const apiToken = res.data.token;
+
+                const pushRes = await axios.post(`${API}/odoo/push`, { token: apiToken });
+
+                if (pushRes.data.success) {
+                  toast.success(lang === 'en' ? 'Templates pushed to Odoo!' : 'Шаблоны отправлены в Odoo!');
+                } else {
+                  toast.error(lang === 'en' ? 'Push failed' : 'Не удалось отправить в Odoo');
+                }
+              } catch (err) {
+                console.error('Push to Odoo failed:', err);
+                toast.error(lang === 'en' ? 'Error pushing to Odoo' : 'Ошибка при отправке в Odoo');
+              }
+            }}
+          >
+            <i className="bi bi-upload"></i> {lang === 'en' ? 'Push to Odoo' : 'Отправить в Odoo'}
+          </button>
+        )}
+        {isLoggedIn && (
+          <button
+            className={`${isDark ? 'text-white dark-mode' : 'text-dark light-mode'} mb-3`}
             onClick={() => {
               window.open(`${API.replace('/api', '')}/auth/sf/login`, '_blank');
             }}
