@@ -12,18 +12,19 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
     const API = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
+        if (!isAdmin) return;
+
         const socket = io(import.meta.env.VITE_API_URL.replace('/api', ''), {
-            transports: ['websocket'],
-          });
+            transports: ['websocket', 'polling'],
+        });
 
         socket.on('new_ticket', (data) => {
-            if (isAdmin) {
-                const { userName, summary, priority } = data;
-                toast.info(`📩 New Ticket from ${userName}: "${summary}" [${priority}]`);            }
+            const { userName, summary, priority } = data;
+            toast.info(`📩 New Ticket from ${userName}: "${summary}" [${priority}]`);
         });
 
         return () => socket.disconnect();
-    }, [user, isAdmin]);
+    }, [isAdmin]);
     
     const [search, setSearch] = useState('');
 
@@ -58,7 +59,7 @@ export default function Navbar({ isDark, onToggleTheme, lang, onToggleLanguage }
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <button onClick={onToggleTheme} className={`btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'} btn-sm ms-auto`}>
-                {isDark ? <i class="bi bi-brightness-high"></i> : <i class="bi bi-moon"></i>}
+                {isDark ? <i className="bi bi-brightness-high"></i> : <i className="bi bi-moon"></i>}
                 </button>
                 <button onClick={onToggleLanguage} className={`btn ${isDark ? 'btn-outline-dark text-white border-white' : 'btn-outline-light text-dark border-dark'} btn-sm ms-auto`} style={{ marginLeft: '10px' }}>
                     {lang === 'en' ? <span>ru</span> : <span>en</span>}
